@@ -1,0 +1,92 @@
+name: Release
+
+# Builds the game for Windows and Linux and attaches the zips to a GitHub Release.
+# Trigger by pushing a tag, e.g.:  git tag v1.0 && git push origin v1.0
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            zip
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-pkgconf
+            mingw-w64-ucrt-x86_64-SDL2
+            mingw-w64-ucrt-x86_64-SDL2_image
+            mingw-w64-ucrt-x86_64-SDL2_ttf
+            mingw-w64-ucrt-x86_64-SDL2_mixer
+      - name: Build
+        working-directory: Final 1.0
+        run: >-
+          g++ -std=c++11 main.cpp -o game.exe
+          -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+      - name: Package
+        run: |
+          mkdir -p dist/game
+          cp "Final 1.0/game.exe" dist/game/
+          cp -r "Final 1.0"/{images,sound,maps,fonts} dist/game/
+          # Copy every non-system DLL the exe needs (SDL2 and its dependencies)
+          ldd "Final 1.0/game.exe" | awk '/ucrt64/ {print $3}' | xargs -I{} cp "{}" dist/game/
+          cd dist && zip -r ../game-windows-x64.zip game
+      - uses: actions/upload-artifact@v4
+        with:
+          name: game-windows-x64
+          path: game-windows-x64.zip
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: >-
+          sudo apt-get update && sudo apt-get install -y
+          g++ pkg-config libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
+      - name: Build
+        working-directory: Final 1.0
+        run: >-
+          g++ -std=c++11 main.cpp -o game
+          $(pkg-config --cflags --libs sdl2 SDL2_image SDL2_ttf SDL2_mixer)
+      - name: Package
+        run: |
+          mkdir -p dist/game
+          cp "Final 1.0/game" dist/game/
+          cp -r "Final 1.0"/{images,sound,maps,fonts} dist/game/
+          cat > dist/game/README.txt <<'TXT'
+          Requires the SDL2 runtime libraries, e.g. on Debian/Ubuntu:
+            sudo apt install libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-ttf-2.0-0 libsdl2-mixer-2.0-0
+          Run from inside this folder:  ./game
+          TXT
+          tar -C dist -czf game-linux-x64.tar.gz game
+      - uses: actions/upload-artifact@v4
+        with:
+          name: game-linux-x64
+          path: game-linux-x64.tar.gz
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [build-windows, build-linux]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+          generate_release_notes: true
