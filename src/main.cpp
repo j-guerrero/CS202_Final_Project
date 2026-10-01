@@ -119,7 +119,7 @@ void renderGame();
 
 void renderGame(SDL_Rect &cam)
 {
-    SDL_SetRenderDrawColor(gameRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_SetRenderDrawColor(gameRenderer, 0, 0, 0, 0xFF);
     SDL_RenderClear(gameRenderer);
     
     
@@ -240,7 +240,7 @@ void removeController(SDL_Event& e)
             }
             
             //Create window
-            gameWindow = SDL_CreateWindow("VIDEO GAME: THE MOVIE: THE GAME 3", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_MAXIMIZED);
+            gameWindow = SDL_CreateWindow("VIDEO GAME: THE MOVIE: THE GAME 3", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE);
             if( gameWindow == NULL )
             {
                 std:: cout << "Window could not be created! SDL Error: " << SDL_GetError() << std::endl;
@@ -260,6 +260,10 @@ void removeController(SDL_Event& e)
                 else
                 {
                     std::cout << "Renderer successfully created!" << std::endl;
+                    //Render at a fixed logical size and let SDL scale it to the window,
+                    //so the camera, menus and tiles agree however large the window is
+                    SDL_RenderSetLogicalSize( gameRenderer, SCREEN_WIDTH, SCREEN_HEIGHT );
+                    
                     //Initialize renderer color
                     SDL_SetRenderDrawColor( gameRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
                     
@@ -712,7 +716,7 @@ void start()
                         checkAll(chasemobVector[i]);
                     }
                     //Clear screen
-                    SDL_SetRenderDrawColor(gameRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+                    SDL_SetRenderDrawColor(gameRenderer, 0, 0, 0, 0xFF);
                     SDL_RenderClear(gameRenderer);
                     
                     //Tile collision checks
