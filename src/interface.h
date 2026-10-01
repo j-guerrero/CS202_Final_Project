@@ -68,7 +68,7 @@ class HUD
 };
 
 //Holds heart state animations
-vector<SDL_Rect> heartState(4);
+vector<SDL_Rect> heartState(5);
 
 void HUD::free()
 {
