@@ -32,7 +32,7 @@ public:
     //Loads image at specified path
     bool loadFromFile(std::string path );
     
-#ifdef _SDL_TTF_H
+#ifdef TTF_MAJOR_VERSION
     //Creates image from font string
     bool loadFromRenderedText( std::string textureText, SDL_Color textColor );
 #endif
@@ -216,7 +216,7 @@ int LTexture::getHeight()
     return mHeight;
 }
 
-#ifdef _SDL_TTF_H
+#ifdef TTF_MAJOR_VERSION
 bool LTexture::loadFromRenderedText( std::string textureText, SDL_Color textColor )
 {
     //Get rid of preexisting texture
