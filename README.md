@@ -30,6 +30,44 @@ g++ -std=c++11 main.cpp -o game $(pkg-config --cflags --libs sdl2 SDL2_image SDL
 ./game
 ```
 
+### Windows 11
+
+**Option 1: WSL2 (easiest).** Windows 11 runs Linux GUI apps and audio through WSLg,
+so the Linux instructions above work unchanged. In PowerShell run `wsl --install`,
+reboot, open Ubuntu, then:
+
+```
+sudo apt update
+sudo apt install g++ git pkg-config libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
+git clone https://github.com/j-guerrero/CS202_Final_Project
+cd CS202_Final_Project/"Final 1.0"
+g++ -std=c++11 main.cpp -o game $(pkg-config --cflags --libs sdl2 SDL2_image SDL2_ttf SDL2_mixer)
+./game
+```
+
+**Option 2: MSYS2 / MinGW (native `.exe`).** Install [MSYS2](https://www.msys2.org), open
+the "MSYS2 UCRT64" shell, and run:
+
+```
+pacman -S mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-pkgconf \
+  mingw-w64-ucrt-x86_64-SDL2 mingw-w64-ucrt-x86_64-SDL2_image \
+  mingw-w64-ucrt-x86_64-SDL2_ttf mingw-w64-ucrt-x86_64-SDL2_mixer
+cd "/path/to/CS202_Final_Project/Final 1.0"
+g++ -std=c++11 main.cpp -o game.exe -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+./game.exe
+```
+
+To launch the `.exe` from Explorer instead, copy the SDL DLLs from
+`C:\msys64\ucrt64\bin` next to it (and keep it inside `Final 1.0`).
+
+**Option 3: Visual Studio.** Create an empty C++ console project containing `main.cpp`,
+install the libraries with `vcpkg install sdl2 sdl2-image sdl2-ttf sdl2-mixer` and
+`vcpkg integrate install`, and set the debugging working directory to `Final 1.0`.
+This has not been tested; MSVC may flag things GCC accepts.
+
+The code is verified to cross-compile and link for 64-bit Windows with MinGW-w64, but
+it has not been run on a real Windows machine.
+
 ### Xcode (macOS)
 
 1. Install the SDL2, SDL2_image, SDL2_ttf and SDL2_mixer frameworks from
