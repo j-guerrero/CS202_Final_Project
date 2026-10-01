@@ -751,7 +751,11 @@ void start()
                     }
 
                     
-                    health.render(Ps[0]);
+                    //Players are all gone after the game over screen
+                    if(!Ps.empty())
+                    {
+                        health.render(Ps[0]);
+                    }
                     
                     //Render text
                     gTextTexture.render( (SCREEN_WIDTH - gTextTexture.getWidth())/2, (SCREEN_HEIGHT - gTextTexture.getHeight()) );
