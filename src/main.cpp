@@ -240,7 +240,7 @@ void removeController(SDL_Event& e)
             }
             
             //Create window
-            gameWindow = SDL_CreateWindow("VIDEO GAME: THE MOVIE: THE GAME 3", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE);
+            gameWindow = SDL_CreateWindow("VIDEO GAME: THE MOVIE: THE GAME 3", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
             if( gameWindow == NULL )
             {
                 std:: cout << "Window could not be created! SDL Error: " << SDL_GetError() << std::endl;
