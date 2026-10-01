@@ -135,8 +135,13 @@ bool LTexture::loadFromFile(std::string path )
     
     else
     {
-        //Color key image
-        SDL_SetColorKey( loadedSurface, SDL_TRUE, SDL_MapRGB( loadedSurface->format, 0, 0xFF, 0xFF ) );
+        //Color key cyan, unless the image already carries its own transparency
+        //(an alpha channel or a PNG palette color key). Overriding that would
+        //turn the real background opaque.
+        if( !SDL_HasColorKey( loadedSurface ) && !SDL_ISPIXELFORMAT_ALPHA( loadedSurface->format->format ) )
+        {
+            SDL_SetColorKey( loadedSurface, SDL_TRUE, SDL_MapRGB( loadedSurface->format, 0, 0xFF, 0xFF ) );
+        }
         
         //Create texture from surface pixels
         newTexture = SDL_CreateTextureFromSurface( gameRenderer, loadedSurface );
