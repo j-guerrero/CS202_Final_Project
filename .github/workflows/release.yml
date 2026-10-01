@@ -31,17 +31,17 @@ jobs:
             mingw-w64-ucrt-x86_64-SDL2_ttf
             mingw-w64-ucrt-x86_64-SDL2_mixer
       - name: Build
-        working-directory: Final 1.0
+        working-directory: src
         run: >-
           g++ -std=c++11 main.cpp -o game.exe
           -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
       - name: Package
         run: |
           mkdir -p dist/game
-          cp "Final 1.0/game.exe" dist/game/
-          cp -r "Final 1.0"/{images,sound,maps,fonts} dist/game/
+          cp "src/game.exe" dist/game/
+          cp -r src/{images,sound,maps,fonts} dist/game/
           # Copy every non-system DLL the exe needs (SDL2 and its dependencies)
-          ldd "Final 1.0/game.exe" | awk '/ucrt64/ {print $3}' | xargs -I{} cp "{}" dist/game/
+          ldd "src/game.exe" | awk '/ucrt64/ {print $3}' | xargs -I{} cp "{}" dist/game/
           cd dist && zip -r ../game-windows-x64.zip game
       - uses: actions/upload-artifact@v4
         with:
@@ -57,15 +57,15 @@ jobs:
           sudo apt-get update && sudo apt-get install -y
           g++ pkg-config libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
       - name: Build
-        working-directory: Final 1.0
+        working-directory: src
         run: >-
           g++ -std=c++11 main.cpp -o game
           $(pkg-config --cflags --libs sdl2 SDL2_image SDL2_ttf SDL2_mixer)
       - name: Package
         run: |
           mkdir -p dist/game
-          cp "Final 1.0/game" dist/game/
-          cp -r "Final 1.0"/{images,sound,maps,fonts} dist/game/
+          cp "src/game" dist/game/
+          cp -r src/{images,sound,maps,fonts} dist/game/
           cat > dist/game/README.txt <<'TXT'
           Requires the SDL2 runtime libraries, e.g. on Debian/Ubuntu:
             sudo apt install libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-ttf-2.0-0 libsdl2-mixer-2.0-0

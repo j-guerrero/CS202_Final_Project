@@ -3,12 +3,12 @@ Parody of Legend of Zelda: A Link to the Past.
 
 Built from scratch using C++ and the SDL2 library (SDL2, SDL2_image, SDL2_ttf, SDL2_mixer).
 
-All source code and assets live in `Final 1.0/`.
+All source code and assets live in `src/`.
 
 ## Building and running
 
 The game loads `images/`, `sound/`, `maps/` and `fonts/` by relative path, so it
-must be run from inside the `Final 1.0` directory.
+must be run from inside the `src` directory.
 
 ### Command line (Linux or macOS)
 
@@ -25,7 +25,7 @@ brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer
 Then build and run:
 
 ```
-cd "Final 1.0"
+cd src
 g++ -std=c++11 main.cpp -o game $(pkg-config --cflags --libs sdl2 SDL2_image SDL2_ttf SDL2_mixer)
 ./game
 ```
@@ -40,7 +40,7 @@ reboot, open Ubuntu, then:
 sudo apt update
 sudo apt install g++ git pkg-config libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
 git clone https://github.com/j-guerrero/CS202_Final_Project
-cd CS202_Final_Project/"Final 1.0"
+cd CS202_Final_Project/src
 g++ -std=c++11 main.cpp -o game $(pkg-config --cflags --libs sdl2 SDL2_image SDL2_ttf SDL2_mixer)
 ./game
 ```
@@ -52,17 +52,17 @@ the "MSYS2 UCRT64" shell, and run:
 pacman -S mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-pkgconf \
   mingw-w64-ucrt-x86_64-SDL2 mingw-w64-ucrt-x86_64-SDL2_image \
   mingw-w64-ucrt-x86_64-SDL2_ttf mingw-w64-ucrt-x86_64-SDL2_mixer
-cd "/path/to/CS202_Final_Project/Final 1.0"
+cd "/path/to/CS202_Final_Project/src"
 g++ -std=c++11 main.cpp -o game.exe -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 ./game.exe
 ```
 
 To launch the `.exe` from Explorer instead, copy the SDL DLLs from
-`C:\msys64\ucrt64\bin` next to it (and keep it inside `Final 1.0`).
+`C:\msys64\ucrt64\bin` next to it (and keep it inside `src`).
 
 **Option 3: Visual Studio.** Create an empty C++ console project containing `main.cpp`,
 install the libraries with `vcpkg install sdl2 sdl2-image sdl2-ttf sdl2-mixer` and
-`vcpkg integrate install`, and set the debugging working directory to `Final 1.0`.
+`vcpkg integrate install`, and set the debugging working directory to `src`.
 This has not been tested; MSVC may flag things GCC accepts.
 
 The code is verified to cross-compile and link for 64-bit Windows with MinGW-w64, but
@@ -74,7 +74,7 @@ it has not been run on a real Windows machine.
    [libsdl.org](https://libsdl.org) into `/Library/Frameworks`.
 2. Open `GameTest.xcodeproj`.
 3. In Product > Scheme > Edit Scheme > Run > Options, set the working directory
-   to the `Final 1.0` folder (the saved path points at the original author's machine).
+   to the `src` folder (the saved path points at the original author's machine).
 4. Build and run.
 
 ## Releases

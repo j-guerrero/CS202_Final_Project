@@ -124,7 +124,7 @@
 		9D25E6F41AE32A3800ED8339 = {
 			isa = PBXGroup;
 			children = (
-				9D9BB04A1BBA127900C0F0C0 /* Final 1.0 */,
+				9D9BB04A1BBA127900C0F0C0 /* src */,
 				9D9BB0401BBA119800C0F0C0 /* SDL2_image.framework */,
 				9D9BB0411BBA119800C0F0C0 /* SDL2_mixer.framework */,
 				9D9BB0421BBA119800C0F0C0 /* SDL2_ttf.framework */,
@@ -142,7 +142,7 @@
 			path = GameTest;
 			sourceTree = "<group>";
 		};
-		9D9BB04A1BBA127900C0F0C0 /* Final 1.0 */ = {
+		9D9BB04A1BBA127900C0F0C0 /* src */ = {
 			isa = PBXGroup;
 			children = (
 				9D9BB04B1BBA127900C0F0C0 /* bullet.h */,
@@ -157,8 +157,8 @@
 				9D9BB0821BBA127900C0F0C0 /* texture.h */,
 				9D9BB0831BBA127900C0F0C0 /* tiles.h */,
 			);
-			name = "Final 1.0";
-			path = "GameTest/Combo_Build/Final 1.0";
+			name = src;
+			path = src;
 			sourceTree = "<group>";
 		};
 		9D9BB04C1BBA127900C0F0C0 /* fonts */ = {
