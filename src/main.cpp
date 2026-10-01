@@ -21,6 +21,7 @@
 
 #include "texture.h"
 #include "framelimit.h"
+#include "windowclose.h"
 #include "player.h"
 #include "tiles.h"
 #include "menu.h"
@@ -526,6 +527,7 @@ void start()
                         //If close window button is hit
                         if(e.type == SDL_QUIT)
                         {
+                            windowCloseRequested() = true;
                             quit = true;
                         }
                         else if(e.type == SDL_JOYDEVICEADDED)
@@ -772,7 +774,7 @@ void start()
                 //Quit back to main menu
                 quit = false;
                 mainMenu.setRun(false);
-                if(deathScreen.getQuit())
+                if(deathScreen.getQuit() || windowCloseRequested())
                 {
                     mainMenu.setQuitTrue();
                 }

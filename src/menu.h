@@ -19,6 +19,7 @@
 #include "texture.h"
 #include "player.h"
 #include "framelimit.h"
+#include "windowclose.h"
 
 using std::vector;
 
@@ -337,6 +338,7 @@ vector<LTexture* > mainMenuItems(3);
     //If hit quit, back out
     if(e.type == SDL_QUIT)
     {
+        setQuitTrue();
         escape = true;
     }
     
@@ -751,6 +753,8 @@ void Pause::handleEvent(SDL_Event &e)
     //If hit quit, back out
     if(e.type == SDL_QUIT)
     {
+        windowCloseRequested() = true;
+        setQuitTrue();
         escape = true;
     }
     
@@ -1165,6 +1169,7 @@ void Death::handleEvent(SDL_Event &e)
     //If hit quit, back out
     if(e.type == SDL_QUIT)
     {
+        setQuitTrue();
         escape = true;
     }
     
