@@ -223,6 +223,9 @@ protected:
     double angleYcomp;
     double angle;
     
+    //Direction (degrees) the keyboard shoots, last direction moved. Starts facing down
+    double facing = 90;
+    
     //Shot controll
     bool canShoot;
 };
@@ -351,8 +354,12 @@ void Player::handleEvent( SDL_Event& e)
             case SDLK_LEFT: mVelX -= PLAYER_VEL; break;
             case SDLK_RIGHT: mVelX += PLAYER_VEL; break;
             case SDLK_SPACE: std::cout<< mPosX << " , " << mPosY << std::endl;
-            case SDLK_RETURN: shoot(M_PI/4); break;
+            case SDLK_RETURN: shoot(facing); break;
         }
+        
+        //Face the direction being moved (diagonals included)
+        if(mVelX != 0 || mVelY != 0)
+        { facing = atan2(mVelY, mVelX) * (180.0 / M_PI); }
     }
     //If a key was released
     else if( e.type == SDL_KEYUP && e.key.repeat == 0 )
@@ -365,6 +372,10 @@ void Player::handleEvent( SDL_Event& e)
             case SDLK_LEFT: mVelX += PLAYER_VEL; break;
             case SDLK_RIGHT: mVelX -= PLAYER_VEL; break;
         }
+        
+        //Releasing one of two held keys turns to face the one still held
+        if(mVelX != 0 || mVelY != 0)
+        { facing = atan2(mVelY, mVelX) * (180.0 / M_PI); }
     }
     
     /*
