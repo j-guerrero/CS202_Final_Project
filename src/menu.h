@@ -18,6 +18,7 @@
 #include <vector>
 #include "texture.h"
 #include "player.h"
+#include "framelimit.h"
 
 using std::vector;
 
@@ -458,6 +459,7 @@ vector<LTexture* > mainMenuItems(3);
             
             //Render All
             SDL_RenderPresent(gameRenderer);
+            limitFrameRate();
         }
         
     };
@@ -606,6 +608,7 @@ void Pause::renderPause()
         
         //Render All
         SDL_RenderPresent(gameRenderer);
+        limitFrameRate();
     }
     
     //Destroy SDL Textures
@@ -1008,6 +1011,7 @@ void Death::deathAnimation(Player & player, SDL_Rect * camera)
             }
         
         SDL_RenderPresent(gameRenderer);
+        limitFrameRate();
     }
 }
 
@@ -1054,6 +1058,7 @@ void Death::renderDeath()
         
         //Render All
         SDL_RenderPresent(gameRenderer);
+        limitFrameRate();
     }
     
     

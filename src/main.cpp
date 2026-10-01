@@ -20,6 +20,7 @@
 #include <vector>
 
 #include "texture.h"
+#include "framelimit.h"
 #include "player.h"
 #include "tiles.h"
 #include "menu.h"
@@ -133,6 +134,7 @@ void renderGame(SDL_Rect &cam)
     
     //Display all in order
     SDL_RenderPresent(gameRenderer);
+    limitFrameRate();
 }
 
 //void renderGamePaus
@@ -762,6 +764,7 @@ void start()
                     
                     //Display all in order
                     SDL_RenderPresent(gameRenderer);
+                    limitFrameRate();
                     
                     }
                 }
