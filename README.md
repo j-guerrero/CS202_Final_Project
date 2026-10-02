@@ -60,13 +60,24 @@ g++ -std=c++11 main.cpp -o game.exe -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lS
 To launch the `.exe` from Explorer instead, copy the SDL DLLs from
 `C:\msys64\ucrt64\bin` next to it (and keep it inside `src`).
 
-**Option 3: Visual Studio.** Create an empty C++ console project containing `main.cpp`,
-install the libraries with `vcpkg install sdl2 sdl2-image sdl2-ttf sdl2-mixer` and
-`vcpkg integrate install`, and set the debugging working directory to `src`.
-This has not been tested; MSVC may flag things GCC accepts.
+**Option 3: Visual Studio.** The project is in `vs/` (`vs/vs-app.slnx`, built with the
+Visual Studio 2026 / v145 toolset; retarget the platform toolset in the project properties for
+older versions).
 
-The code is verified to cross-compile and link for 64-bit Windows with MinGW-w64, but
-it has not been run on a real Windows machine.
+1. Install Visual Studio with the "Desktop development with C++" workload and set up vcpkg
+   (`vcpkg integrate install`; the copy bundled with Visual Studio works).
+2. Install the libraries: `vcpkg install sdl2:x64-windows sdl2-image:x64-windows sdl2-ttf:x64-windows sdl2-mixer:x64-windows`
+3. Open `vs/vs-app.slnx`, choose **x64** and Debug or Release, and build/run. Only x64 is set up;
+   the x86 configurations will not build.
+
+The project already defines `_USE_MATH_DEFINES` and `SDL_MAIN_HANDLED`, and debugs with `src/` as
+the working directory so the game finds its assets. Build output goes to `vs/build/x64/<Config>/`
+with the assets copied next to the `.exe` (vcpkg copies the SDL DLLs). A Release build also gathers
+the `.exe`, DLLs and assets into `vs/publish/`, which you can zip and share. This route has not
+been tested on a clean machine.
+
+The game has been run on Windows 11 under WSL2 and built and run with Visual Studio. The MSYS2
+route (Option 2) is only verified to cross-compile and link with MinGW-w64.
 
 ### Xcode (macOS)
 

@@ -1,0 +1,10 @@
+# Visual Studio
+.vs/
+*.user
+vs/build/
+vs/publish/
+# Old Visual Studio default output folders (before outputs were pinned to vs/build)
+vs/x64/
+vs/Debug/
+vs/Release/
+vs/vs-app/
