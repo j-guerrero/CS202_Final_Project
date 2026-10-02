@@ -81,8 +81,8 @@
     <!-- The game loads images/sound/maps/fonts by relative path, so debug from src -->
     <LocalDebuggerWorkingDirectory>$(ProjectDir)..\src</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <!-- Name of the built exe: the window title in src/main.cpp without its colons, which Windows filenames cannot contain -->
-    <TargetName>VIDEO GAME THE MOVIE THE GAME 3</TargetName>
+    <!-- Name of the built exe: the window title in src/main.cpp without its colons (Windows filenames cannot contain them), plus the platform. Only x64 is set up, so it is written out. -->
+    <TargetName>VIDEO GAME THE MOVIE THE GAME 3 (Windows x64)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
