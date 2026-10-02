@@ -106,8 +106,8 @@ If you add or rename an asset file, add or change it in both `src/assets.rc` (a 
 non-Windows builds read the files from disk and need no entry. The startup line
 `Embedded assets found: N of M` shows if the two lists ever disagree.
 
-The game has been run on Windows 11 under WSL2 and built, run and published with Visual Studio.
-The single-file build has not yet been confirmed in Visual Studio.
+The game has been run on Windows 11 under WSL2, and built, run and published as a single-file
+executable with Visual Studio.
 
 ### Xcode (macOS)
 
