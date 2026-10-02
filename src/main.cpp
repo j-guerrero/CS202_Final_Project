@@ -327,31 +327,31 @@ bool loadMedia()
         success = false;
     }
     //Load Music
-    menuMusic = Mix_LoadMUS("sound/WWtheme.wav");
+    menuMusic = Mix_LoadMUS("sound/WWtheme.ogg");
     if(menuMusic== NULL)
     {
         std::cout << "Failed to load menu music" << std::endl;
         success = false;
     }
 
-    overworldTheme = Mix_LoadMUS("sound/overworld.wav");
+    overworldTheme = Mix_LoadMUS("sound/overworld.ogg");
     if(overworldTheme==NULL)
     {
         std::cout << "failed to load overworld theme" << std::endl;
         success = false;
     }
 
-    flowerTheme= Mix_LoadMUS("sound/snakeEater.wav");
+    flowerTheme= Mix_LoadMUS("sound/snakeEater.ogg");
     if(flowerTheme == NULL)
     {
         std::cout <<"failed to load snake eater theme from file"<<std::endl;
         success=false;
     }
 
-    pauseMusic= Mix_LoadMUS("sound/sabotage.wav");
+    pauseMusic= Mix_LoadMUS("sound/sabotage.ogg");
     if(pauseMusic==NULL)
     {
-        std::cout <<"faild to load sabotage.wav" <<std::endl;
+        std::cout <<"faild to load sabotage.ogg" <<std::endl;
         success = false;
     }
     if(!mobSprite.loadFromFile("images/sheet1.png"))
