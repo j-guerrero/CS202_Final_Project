@@ -1287,15 +1287,10 @@ void loadMobs(std::string path)
     if(ifs)
     {
         int t,x,y,h,d,s;
-        while(!ifs.eof())
+        //Stop as soon as a full entry can't be read. Looping on eof() would run
+        //once more after the last line and spawn that entry a second time.
+        while(ifs>>t>>x>>y>>h>>d>>s)
         {
-            ifs>>t;
-            ifs>>x;
-            ifs>>y;
-            ifs>>h;
-            ifs>>d;
-            ifs>>s;
-            
             switch (t) {
                 case 1:
                     addObject(t, x, y);
