@@ -45,23 +45,8 @@ g++ -std=c++11 main.cpp -o game $(pkg-config --cflags --libs sdl2 SDL2_image SDL
 ./game
 ```
 
-**Option 2: MSYS2 / MinGW (native `.exe`).** Install [MSYS2](https://www.msys2.org), open
-the "MSYS2 UCRT64" shell, and run:
-
-```
-pacman -S mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-pkgconf \
-  mingw-w64-ucrt-x86_64-SDL2 mingw-w64-ucrt-x86_64-SDL2_image \
-  mingw-w64-ucrt-x86_64-SDL2_ttf mingw-w64-ucrt-x86_64-SDL2_mixer
-cd "/path/to/CS202_Final_Project/src"
-g++ -std=c++11 main.cpp -o game.exe -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
-./game.exe
-```
-
-To launch the `.exe` from Explorer instead, copy the SDL DLLs from
-`C:\msys64\ucrt64\bin` next to it (and keep it inside `src`).
-
-**Option 3: Visual Studio.** The project is in `vs/` (`vs/vs-app.slnx`, built with the
-Visual Studio 2026 / v145 toolset; retarget the platform toolset in the project properties for
+**Option 2: Visual Studio (native `.exe`).** The project is in `vs/` (`vs/vs-app.slnx`, built with
+the Visual Studio 2026 / v145 toolset; retarget the platform toolset in the project properties for
 older versions).
 
 1. Install Visual Studio with the "Desktop development with C++" workload and set up vcpkg
@@ -72,12 +57,34 @@ older versions).
 
 The project already defines `_USE_MATH_DEFINES` and `SDL_MAIN_HANDLED`, and debugs with `src/` as
 the working directory so the game finds its assets. Build output goes to `vs/build/x64/<Config>/`
-with the assets copied next to the `.exe` (vcpkg copies the SDL DLLs). A Release build also gathers
-the `.exe`, DLLs and assets into `vs/publish/`, which you can zip and share. This route has not
-been tested on a clean machine.
+with the assets copied next to the `.exe` (vcpkg copies the SDL DLLs).
 
-The game has been run on Windows 11 under WSL2 and built and run with Visual Studio. The MSYS2
-route (Option 2) is only verified to cross-compile and link with MinGW-w64.
+#### Publishing an executable with Visual Studio
+
+A Release build assembles a folder you can share:
+
+1. Open `vs/vs-app.slnx`.
+2. In the toolbar set the configuration to **Release** and the platform to **x64**.
+3. Build with Build > Rebuild Solution (Ctrl+Shift+B). The first build is slower because the
+   sound files are copied.
+4. Take the result from `vs/publish/`. It contains `vs-app.exe`, the SDL DLLs and the `images`,
+   `sound`, `maps` and `fonts` folders.
+5. To check it, run `vs/publish/vs-app.exe` (double-click it) outside of Visual Studio.
+6. To share it, zip the whole `publish` folder. Whoever receives it unzips it and runs
+   `vs-app.exe` from inside the folder, since the game loads its assets by relative path.
+
+If something is missing from `vs/publish/`:
+
+- **No DLLs:** vcpkg copies them into `vs/build/x64/Release/` first, and the publish step copies
+  from there. Make sure `vcpkg integrate install` has been run and that Project > Properties >
+  vcpkg > "Use AppLocal Deps" is Yes.
+- **The build fails on an `xcopy` line:** the post-build commands are in the project's
+  Properties > Build Events > Post-Build Event. Check the paths there and the Output window
+  for the exact message.
+- **The game starts but shows no images or sound:** the asset folders are not next to the
+  `.exe`. Run it from inside `vs/publish/`.
+
+The game has been run on Windows 11 under WSL2 and built, run and published with Visual Studio.
 
 ### Xcode (macOS)
 
