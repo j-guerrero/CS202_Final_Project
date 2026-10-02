@@ -3,6 +3,9 @@ Parody of Legend of Zelda: A Link to the Past.
 
 Built from scratch using C++ and the SDL2 library (SDL2, SDL2_image, SDL2_ttf, SDL2_mixer).
 
+> **Update (2026):** This 2015 project has been updated to build and run correctly on
+> current systems (modern SDL2 libraries, Windows 11, and Linux).
+
 All source code and assets live in `src/`.
 
 ## Building and running
