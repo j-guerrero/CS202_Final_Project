@@ -1,0 +1,52 @@
+// Windows-only lookup for assets embedded in the executable by assets.rc.
+// Built with EMBEDDED_ASSETS defined in the Release configuration; elsewhere it
+// compiles to nothing and the game reads its assets from disk.
+#ifdef EMBEDDED_ASSETS
+
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
+#include <cstddef>
+#include <cstring>
+
+namespace
+{
+    struct EmbeddedAsset
+    {
+        const char* path;
+        int id;
+    };
+
+    const EmbeddedAsset assetTable[] =
+    {
+#define ASSET(id, path) { path, id },
+#include "assets_list.h"
+#undef ASSET
+    };
+}
+
+//Finds an embedded asset by its path relative to src/ (e.g. "images/health.png").
+//The data stays valid for the life of the program.
+bool findEmbeddedAsset(const char* path, const void** data, size_t* size)
+{
+    for(const EmbeddedAsset& asset : assetTable)
+    {
+        if(std::strcmp(asset.path, path) != 0)
+        { continue; }
+
+        HRSRC resource = FindResourceA(NULL, MAKEINTRESOURCEA(asset.id), RT_RCDATA);
+        if(resource == NULL)
+        { return false; }
+
+        HGLOBAL loaded = LoadResource(NULL, resource);
+        if(loaded == NULL)
+        { return false; }
+
+        *data = LockResource(loaded);
+        *size = (size_t)SizeofResource(NULL, resource);
+        return *data != NULL;
+    }
+    return false;
+}
+
+#endif

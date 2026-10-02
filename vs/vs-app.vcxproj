@@ -70,6 +70,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <!-- Release links SDL statically (x64-windows-static) so the exe needs no DLLs -->
+    <VcpkgUseStatic>true</VcpkgUseStatic>
+  </PropertyGroup>
   <PropertyGroup>
     <!-- Keep every build product under vs\build so there is a single folder to ignore -->
     <OutDir>$(MSBuildThisFileDirectory)build\$(Platform)\$(Configuration)\</OutDir>
@@ -141,42 +145,50 @@ xcopy "$(ProjectDir)..\src\fonts" "$(OutDir)fonts\" /E /I /Y /Q /D</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_USE_MATH_DEFINES;SDL_MAIN_HANDLED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_USE_MATH_DEFINES;SDL_MAIN_HANDLED;EMBEDDED_ASSETS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2main.lib;winmm.lib;imm32.lib;version.lib;setupapi.lib;cfgmgr32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
     </Manifest>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)..\src\images" "$(OutDir)images\" /E /I /Y /Q /D
-xcopy "$(ProjectDir)..\src\sound" "$(OutDir)sound\" /E /I /Y /Q /D
-xcopy "$(ProjectDir)..\src\maps" "$(OutDir)maps\" /E /I /Y /Q /D
-xcopy "$(ProjectDir)..\src\fonts" "$(OutDir)fonts\" /E /I /Y /Q /D
-if not exist "$(MSBuildThisFileDirectory)publish" mkdir "$(MSBuildThisFileDirectory)publish"
+      <!-- The assets are embedded in the exe, so publish only needs the exe (and any DLLs) -->
+      <Command>if not exist "$(MSBuildThisFileDirectory)publish" mkdir "$(MSBuildThisFileDirectory)publish"
 xcopy "$(OutDir)*.exe" "$(MSBuildThisFileDirectory)publish\" /Y /Q
-if exist "$(OutDir)*.dll" xcopy "$(OutDir)*.dll" "$(MSBuildThisFileDirectory)publish\" /Y /Q
-xcopy "$(OutDir)images" "$(MSBuildThisFileDirectory)publish\images\" /E /I /Y /Q /D
-xcopy "$(OutDir)sound" "$(MSBuildThisFileDirectory)publish\sound\" /E /I /Y /Q /D
-xcopy "$(OutDir)maps" "$(MSBuildThisFileDirectory)publish\maps\" /E /I /Y /Q /D
-xcopy "$(OutDir)fonts" "$(MSBuildThisFileDirectory)publish\fonts\" /E /I /Y /Q /D</Command>
+if exist "$(OutDir)*.dll" xcopy "$(OutDir)*.dll" "$(MSBuildThisFileDirectory)publish\" /Y /Q</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\assets_win.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <!-- Embeds the assets in the exe; Release|x64 only -->
+    <ResourceCompile Include="..\src\assets.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'!='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\assets.h" />
+    <ClInclude Include="..\src\assets_list.h" />
     <ClInclude Include="..\src\bullet.h" />
+    <ClInclude Include="..\src\framelimit.h" />
     <ClInclude Include="..\src\interface.h" />
     <ClInclude Include="..\src\menu.h" />
     <ClInclude Include="..\src\player.h" />
     <ClInclude Include="..\src\texture.h" />
     <ClInclude Include="..\src\tiles.h" />
+    <ClInclude Include="..\src\windowclose.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

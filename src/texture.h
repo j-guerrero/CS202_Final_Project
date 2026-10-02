@@ -17,6 +17,8 @@
 
 #include <string>
 
+#include "assets.h"
+
 //The window we'll be rendering to
 SDL_Renderer *gameRenderer = NULL;
 //Texture wrapper class
@@ -127,7 +129,8 @@ bool LTexture::loadFromFile(std::string path )
     SDL_Texture* newTexture = NULL;
     
     //Load image at specified path
-    SDL_Surface* loadedSurface = IMG_Load( path.c_str() );
+    SDL_RWops* source = openAsset( path );
+    SDL_Surface* loadedSurface = ( source != NULL ) ? IMG_Load_RW( source, 1 ) : NULL;
     if( loadedSurface == NULL )
     {
         printf( "Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );

@@ -1,0 +1,5 @@
+// Resource script that embeds the game's assets in the executable.
+// Only compiled into the Release build (see vs/vs-app.vcxproj).
+#define ASSET(id, path) id RCDATA path
+#include "assets_list.h"
+#undef ASSET

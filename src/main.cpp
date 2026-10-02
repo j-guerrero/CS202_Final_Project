@@ -327,28 +327,28 @@ bool loadMedia()
         success = false;
     }
     //Load Music
-    menuMusic = Mix_LoadMUS("sound/WWtheme.ogg");
+    menuMusic = Mix_LoadMUS_RW(openAsset("sound/WWtheme.ogg"), 1);
     if(menuMusic== NULL)
     {
         std::cout << "Failed to load menu music" << std::endl;
         success = false;
     }
 
-    overworldTheme = Mix_LoadMUS("sound/overworld.ogg");
+    overworldTheme = Mix_LoadMUS_RW(openAsset("sound/overworld.ogg"), 1);
     if(overworldTheme==NULL)
     {
         std::cout << "failed to load overworld theme" << std::endl;
         success = false;
     }
 
-    flowerTheme= Mix_LoadMUS("sound/snakeEater.ogg");
+    flowerTheme= Mix_LoadMUS_RW(openAsset("sound/snakeEater.ogg"), 1);
     if(flowerTheme == NULL)
     {
         std::cout <<"failed to load snake eater theme from file"<<std::endl;
         success=false;
     }
 
-    pauseMusic= Mix_LoadMUS("sound/sabotage.ogg");
+    pauseMusic= Mix_LoadMUS_RW(openAsset("sound/sabotage.ogg"), 1);
     if(pauseMusic==NULL)
     {
         std::cout <<"faild to load sabotage.ogg" <<std::endl;
@@ -360,19 +360,19 @@ bool loadMedia()
         success = false;
     }
     //Load sound effects
-    boom= Mix_LoadWAV("sound/gun.wav");
+    boom= Mix_LoadWAV_RW(openAsset("sound/gun.wav"), 1);
     if(boom==NULL)
     {
         std::cout << "failed to load gun sound, it's late i'm out of witty shit to type" << std::endl;
         success =false;
     }
-    boop= Mix_LoadWAV("sound/boop.wav");
+    boop= Mix_LoadWAV_RW(openAsset("sound/boop.wav"), 1);
     if(boop==NULL)
     {
         std::cout << "failed to boop, get bopped son" << std::endl;
         success =false;
     }
-    deathScream= Mix_LoadWAV("sound/death.wav");
+    deathScream= Mix_LoadWAV_RW(openAsset("sound/death.wav"), 1);
     if(deathScream==NULL)
     {
         std::cout << "failed to open death sound" << std::endl;
@@ -406,7 +406,7 @@ bool loadMedia()
     }
     
     //Load text
-    gFont = TTF_OpenFont("fonts/RetGanon.ttf", 40);
+    gFont = TTF_OpenFontRW(openAsset("fonts/RetGanon.ttf"), 1, 40);
     if( gFont == NULL)
     {
         std::cout << "Failed to load text font! SDL_ttf Error: " << TTF_GetError() << std::endl;

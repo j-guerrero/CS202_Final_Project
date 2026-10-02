@@ -130,17 +130,18 @@ bool loadMap(std::string path)
     clearstaticMobs();
     clearchaseMobs();
     clearObjects();
-	std::ifstream map(path.c_str());
-	if(!map)
+	std::string mapText;
+	if(!readAssetText(path, mapText))
     {std::cout<<"unable to find map file, please check file names and strings\n"; return false;}
 	else
 	{
+		std::istringstream map(mapText);
 		//Work out the map size from the file: columns come from the first row,
 		//rows from the number of tiles. Maps may be any size, not just 80x45.
 		int cols=0;
 		int tileCount=0;
 		{
-			std::ifstream probe(path.c_str());
+			std::istringstream probe(mapText);
 			std::string line;
 			while(std::getline(probe, line))
 			{
@@ -196,7 +197,6 @@ bool loadMap(std::string path)
 		}
 	}
     loadMobs(mPath);
-	map.close();
 return true;
 }
 
