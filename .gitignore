@@ -1,0 +1,33 @@
+# ---- Visual Studio ----
+.vs/
+*.user
+*.suo
+# Project outputs are pinned to vs/build (see vs/vs-app.vcxproj); publish is the Release bundle
+vs/build/
+vs/publish/
+# Default output folders from before the outputs were pinned
+vs/x64/
+vs/Debug/
+vs/Release/
+vs/vs-app/
+# vcpkg manifest-mode install tree
+vcpkg_installed/
+
+# ---- Compiled output (README builds write src/game, src/game.exe) ----
+build/
+*.exe
+*.o
+*.obj
+*.pdb
+*.ilk
+*.exp
+src/game
+
+# ---- Xcode ----
+DerivedData/
+xcuserdata/
+*.xcuserstate
+
+# ---- OS ----
+.DS_Store
+Thumbs.db

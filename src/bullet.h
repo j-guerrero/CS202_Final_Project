@@ -10,6 +10,7 @@
 #define __Build_1__bullet__
 
 #include <iostream>
+#include <cmath>
 #include <SDL2/SDL.h>
 
 class Bullet

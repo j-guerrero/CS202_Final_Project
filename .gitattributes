@@ -1,0 +1,4 @@
+# Keep Windows line endings for Visual Studio files
+*.slnx text eol=crlf
+*.vcxproj text eol=crlf
+*.filters text eol=crlf

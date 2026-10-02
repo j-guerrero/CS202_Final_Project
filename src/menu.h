@@ -18,6 +18,8 @@
 #include <vector>
 #include "texture.h"
 #include "player.h"
+#include "framelimit.h"
+#include "windowclose.h"
 
 using std::vector;
 
@@ -336,6 +338,7 @@ vector<LTexture* > mainMenuItems(3);
     //If hit quit, back out
     if(e.type == SDL_QUIT)
     {
+        setQuitTrue();
         escape = true;
     }
     
@@ -413,7 +416,7 @@ vector<LTexture* > mainMenuItems(3);
     void MainMenu::render()
     {
         //initialize screen width and height variables
-        SDL_GetRendererOutputSize(gameRenderer, &SCREEN_WIDTH, &SCREEN_HEIGHT);
+        SDL_RenderGetLogicalSize(gameRenderer, &SCREEN_WIDTH, &SCREEN_HEIGHT);
         
         //Set initial flags
         escape = false;
@@ -438,7 +441,7 @@ vector<LTexture* > mainMenuItems(3);
             }
             
             //Clear screen
-            SDL_SetRenderDrawColor(gameRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+            SDL_SetRenderDrawColor(gameRenderer, 0, 0, 0, 0xFF);
             SDL_RenderClear(gameRenderer);
             
             //Set draw color for transparent screen
@@ -458,6 +461,7 @@ vector<LTexture* > mainMenuItems(3);
             
             //Render All
             SDL_RenderPresent(gameRenderer);
+            limitFrameRate();
         }
         
     };
@@ -560,7 +564,7 @@ vector <LTexture*> menuItems(3);
 //Render the pause menu
 void Pause::renderPause()
 {
-    SDL_GetRendererOutputSize(gameRenderer, &SCREEN_WIDTH, &SCREEN_HEIGHT);
+    SDL_RenderGetLogicalSize(gameRenderer, &SCREEN_WIDTH, &SCREEN_HEIGHT);
 
     //Setvariables
     escape = false;
@@ -586,7 +590,7 @@ void Pause::renderPause()
         }
         
         //Clear screen
-        SDL_SetRenderDrawColor(gameRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        SDL_SetRenderDrawColor(gameRenderer, 0, 0, 0, 0xFF);
         SDL_RenderClear(gameRenderer);
         
         //Send background screenshot to renderer
@@ -606,6 +610,7 @@ void Pause::renderPause()
         
         //Render All
         SDL_RenderPresent(gameRenderer);
+        limitFrameRate();
     }
     
     //Destroy SDL Textures
@@ -624,11 +629,35 @@ void Pause::setBackground(int w, int h)
 //Take picture of screen to place underneath
 void Pause::saveScreen()
 {
+    //Find the area of the window the game is drawn into, in real pixels.
+    //With a logical size set that is the scaled (letterboxed) game canvas.
+    int outW, outH;
+    SDL_GetRendererOutputSize(gameRenderer, &outW, &outH);
+    SDL_Rect area = {0, 0, outW, outH};
+    int logW, logH;
+    SDL_RenderGetLogicalSize(gameRenderer, &logW, &logH);
+    bool logical = (logW > 0 && logH > 0);
+    if(logical)
+    {
+        float scaleX, scaleY;
+        SDL_RenderGetScale(gameRenderer, &scaleX, &scaleY);
+        area.w = (int)(logW * scaleX);
+        area.h = (int)(logH * scaleY);
+        area.x = (outW - area.w) / 2;
+        area.y = (outH - area.h) / 2;
+        
+        //Pixel reads use real window coordinates
+        SDL_RenderSetLogicalSize(gameRenderer, 0, 0);
+    }
+    
     // Create surface
-    SDL_Surface *sshot = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+    SDL_Surface *sshot = SDL_CreateRGBSurface(0, area.w, area.h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
     
     //Read surface
-    SDL_RenderReadPixels(gameRenderer, NULL, SDL_PIXELFORMAT_ARGB8888, sshot->pixels, sshot->pitch);
+    SDL_RenderReadPixels(gameRenderer, &area, SDL_PIXELFORMAT_ARGB8888, sshot->pixels, sshot->pitch);
+    
+    if(logical)
+    { SDL_RenderSetLogicalSize(gameRenderer, logW, logH); }
     
     //Save surface
     //SDL_SaveBMP(sshot, "images/pauseBackground.bmp");
@@ -748,6 +777,8 @@ void Pause::handleEvent(SDL_Event &e)
     //If hit quit, back out
     if(e.type == SDL_QUIT)
     {
+        windowCloseRequested() = true;
+        setQuitTrue();
         escape = true;
     }
     
@@ -1008,13 +1039,14 @@ void Death::deathAnimation(Player & player, SDL_Rect * camera)
             }
         
         SDL_RenderPresent(gameRenderer);
+        limitFrameRate();
     }
 }
 
 //Render the death screen
 void Death::renderDeath()
 {
-    SDL_GetRendererOutputSize(gameRenderer, &SCREEN_WIDTH, &SCREEN_HEIGHT);
+    SDL_RenderGetLogicalSize(gameRenderer, &SCREEN_WIDTH, &SCREEN_HEIGHT);
     
     //Setvariables
     escape = false;
@@ -1054,6 +1086,7 @@ void Death::renderDeath()
         
         //Render All
         SDL_RenderPresent(gameRenderer);
+        limitFrameRate();
     }
     
     
@@ -1160,6 +1193,7 @@ void Death::handleEvent(SDL_Event &e)
     //If hit quit, back out
     if(e.type == SDL_QUIT)
     {
+        setQuitTrue();
         escape = true;
     }
     

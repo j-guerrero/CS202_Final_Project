@@ -20,6 +20,8 @@
 #include <vector>
 
 #include "texture.h"
+#include "framelimit.h"
+#include "windowclose.h"
 #include "player.h"
 #include "tiles.h"
 #include "menu.h"
@@ -117,7 +119,7 @@ void renderGame();
 
 void renderGame(SDL_Rect &cam)
 {
-    SDL_SetRenderDrawColor(gameRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_SetRenderDrawColor(gameRenderer, 0, 0, 0, 0xFF);
     SDL_RenderClear(gameRenderer);
     
     
@@ -133,6 +135,7 @@ void renderGame(SDL_Rect &cam)
     
     //Display all in order
     SDL_RenderPresent(gameRenderer);
+    limitFrameRate();
 }
 
 //void renderGamePaus
@@ -237,7 +240,7 @@ void removeController(SDL_Event& e)
             }
             
             //Create window
-            gameWindow = SDL_CreateWindow("VIDEO GAME: THE MOVIE: THE GAME 3", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_MAXIMIZED);
+            gameWindow = SDL_CreateWindow("VIDEO GAME: THE MOVIE: THE GAME 3", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
             if( gameWindow == NULL )
             {
                 std:: cout << "Window could not be created! SDL Error: " << SDL_GetError() << std::endl;
@@ -257,6 +260,10 @@ void removeController(SDL_Event& e)
                 else
                 {
                     std::cout << "Renderer successfully created!" << std::endl;
+                    //Render at a fixed logical size and let SDL scale it to the window,
+                    //so the camera, menus and tiles agree however large the window is
+                    SDL_RenderSetLogicalSize( gameRenderer, SCREEN_WIDTH, SCREEN_HEIGHT );
+                    
                     //Initialize renderer color
                     SDL_SetRenderDrawColor( gameRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
                     
@@ -524,6 +531,7 @@ void start()
                         //If close window button is hit
                         if(e.type == SDL_QUIT)
                         {
+                            windowCloseRequested() = true;
                             quit = true;
                         }
                         else if(e.type == SDL_JOYDEVICEADDED)
@@ -708,7 +716,7 @@ void start()
                         checkAll(chasemobVector[i]);
                     }
                     //Clear screen
-                    SDL_SetRenderDrawColor(gameRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+                    SDL_SetRenderDrawColor(gameRenderer, 0, 0, 0, 0xFF);
                     SDL_RenderClear(gameRenderer);
                     
                     //Tile collision checks
@@ -751,13 +759,18 @@ void start()
                     }
 
                     
-                    health.render(Ps[0]);
+                    //Players are all gone after the game over screen
+                    if(!Ps.empty())
+                    {
+                        health.render(Ps[0]);
+                    }
                     
                     //Render text
                     gTextTexture.render( (SCREEN_WIDTH - gTextTexture.getWidth())/2, (SCREEN_HEIGHT - gTextTexture.getHeight()) );
                     
                     //Display all in order
                     SDL_RenderPresent(gameRenderer);
+                    limitFrameRate();
                     
                     }
                 }
@@ -765,7 +778,7 @@ void start()
                 //Quit back to main menu
                 quit = false;
                 mainMenu.setRun(false);
-                if(deathScreen.getQuit())
+                if(deathScreen.getQuit() || windowCloseRequested())
                 {
                     mainMenu.setQuitTrue();
                 }

@@ -23,7 +23,7 @@
 #include "bullet.h"
 
 
-const int WALKING_ANIMATION_FRAMES = 3; const int SCREEN_WIDTH = 1280; const int SCREEN_HEIGHT = 720; const int LEVEL_HEIGHT = 1440; const int LEVEL_WIDTH = 2560;
+const int WALKING_ANIMATION_FRAMES = 3; const int SCREEN_WIDTH = 1280; const int SCREEN_HEIGHT = 720; int LEVEL_HEIGHT = 1440; int LEVEL_WIDTH = 2560; //Current level size in pixels, set by loadMap
 
 bool checkCollision( SDL_Rect a, SDL_Rect b );
 
@@ -223,6 +223,9 @@ protected:
     double angleYcomp;
     double angle;
     
+    //Direction (degrees) the keyboard shoots, last direction moved. Starts facing down
+    double facing = 90;
+    
     //Shot controll
     bool canShoot;
 };
@@ -351,8 +354,12 @@ void Player::handleEvent( SDL_Event& e)
             case SDLK_LEFT: mVelX -= PLAYER_VEL; break;
             case SDLK_RIGHT: mVelX += PLAYER_VEL; break;
             case SDLK_SPACE: std::cout<< mPosX << " , " << mPosY << std::endl;
-            case SDLK_RETURN: shoot(M_PI/4); break;
+            case SDLK_RETURN: shoot(facing); break;
         }
+        
+        //Face the direction being moved (diagonals included)
+        if(mVelX != 0 || mVelY != 0)
+        { facing = atan2(mVelY, mVelX) * (180.0 / M_PI); }
     }
     //If a key was released
     else if( e.type == SDL_KEYUP && e.key.repeat == 0 )
@@ -365,6 +372,10 @@ void Player::handleEvent( SDL_Event& e)
             case SDLK_LEFT: mVelX += PLAYER_VEL; break;
             case SDLK_RIGHT: mVelX -= PLAYER_VEL; break;
         }
+        
+        //Releasing one of two held keys turns to face the one still held
+        if(mVelX != 0 || mVelY != 0)
+        { facing = atan2(mVelY, mVelX) * (180.0 / M_PI); }
     }
     
     /*
@@ -914,6 +925,19 @@ void Pot::move(int * frame)
 //MOB CLASSES
 //
 
+//Velocity for one axis to close a gap of diff pixels at up to step pixels per frame.
+//Clamping to the gap (instead of always moving a full step) stops a mob from
+//overshooting a target it is almost lined up with and jittering back and forth.
+inline int stepToward(int diff, int step)
+{
+    if(diff > step)
+    { return step; }
+    if(diff < -step)
+    { return -step; }
+    return diff;
+}
+
+
 class Mob:public Player
 {
 public:
@@ -934,6 +958,8 @@ public:
         
         /* ANIMATION */
         
+        //Face one direction per frame, preferring horizontal, so a mob that is
+        //mostly moving sideways does not flip between its side and up/down sprites
         //Right
         if(mVelX > 0)
         { setSprite(gSpriteClipRight, *frame); }
@@ -942,11 +968,11 @@ public:
         else if(mVelX < 0)
         { setSprite(gSpriteClipLeft, *frame); }
         
-        //Up
-        if(mVelY > 0)
+        //Down
+        else if(mVelY > 0)
         { setSprite(gSpriteClipDown, *frame); }
         
-        //Down
+        //Up
         else if(mVelY < 0)
         { setSprite(gSpriteClipUp, *frame); }
     }
@@ -964,18 +990,8 @@ public:
         {
             stop();
             
-            if(target.getPosX()>mPosX)
-                mVelX=MOB_VEL;
-            if(target.getPosX()<mPosX)
-                mVelX=-MOB_VEL;
-            if(target.getPosX()==mPosX)
-                mVelX=0;
-            if(target.getPosY()>mPosY)
-                mVelY=MOB_VEL;
-            if(target.getPosY()<mPosY)
-                mVelY=-MOB_VEL;
-            if(target.getPosY()==mPosY)
-                mVelY=0;
+            mVelX=stepToward(target.getPosX()-mPosX, MOB_VEL);
+            mVelY=stepToward(target.getPosY()-mPosY, MOB_VEL);
         }
         else if (!inRange)
         {
@@ -1145,6 +1161,8 @@ public:
         
         /* ANIMATION */
         
+        //Face one direction per frame, preferring horizontal, so a mob that is
+        //mostly moving sideways does not flip between its side and up/down sprites
         //Right
         if(mVelX > 0)
         { setSprite(gSpriteClipRight, *frame); }
@@ -1153,11 +1171,11 @@ public:
         else if(mVelX < 0)
         { setSprite(gSpriteClipLeft, *frame); }
         
-        //Up
-        if(mVelY > 0)
+        //Down
+        else if(mVelY > 0)
         { setSprite(gSpriteClipDown, *frame); }
         
-        //Down
+        //Up
         else if(mVelY < 0)
         { setSprite(gSpriteClipUp, *frame); }
     }
@@ -1169,18 +1187,8 @@ public:
         }
         else
         {
-            if(target.getPosX()>mPosX)
-                mVelX=MOB_VEL;
-            if(target.getPosX()<mPosX)
-                mVelX=-MOB_VEL;
-            if(target.getPosX()==mPosX)
-                mVelX=0;
-            if(target.getPosY()>mPosY)
-                mVelY=MOB_VEL;
-            if(target.getPosY()<mPosY)
-                mVelY=-MOB_VEL;
-            if(target.getPosY()==mPosY)
-                mVelY=0;
+            mVelX=stepToward(target.getPosX()-mPosX, MOB_VEL);
+            mVelY=stepToward(target.getPosY()-mPosY, MOB_VEL);
         }
     }
     
@@ -1276,15 +1284,10 @@ void loadMobs(std::string path)
     if(ifs)
     {
         int t,x,y,h,d,s;
-        while(!ifs.eof())
+        //Stop as soon as a full entry can't be read. Looping on eof() would run
+        //once more after the last line and spawn that entry a second time.
+        while(ifs>>t>>x>>y>>h>>d>>s)
         {
-            ifs>>t;
-            ifs>>x;
-            ifs>>y;
-            ifs>>h;
-            ifs>>d;
-            ifs>>s;
-            
             switch (t) {
                 case 1:
                     addObject(t, x, y);

@@ -17,6 +17,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <sstream>
 #include "texture.h"
 #include "player.h"
 
@@ -134,10 +135,44 @@ bool loadMap(std::string path)
     {std::cout<<"unable to find map file, please check file names and strings\n"; return false;}
 	else
 	{
+		//Work out the map size from the file: columns come from the first row,
+		//rows from the number of tiles. Maps may be any size, not just 80x45.
+		int cols=0;
+		int tileCount=0;
+		{
+			std::ifstream probe(path.c_str());
+			std::string line;
+			while(std::getline(probe, line))
+			{
+				std::istringstream row(line);
+				int v;
+				int n=0;
+				while(row>>v)
+				{ ++n; }
+				if(cols==0)
+				{ cols=n; }
+				tileCount+=n;
+			}
+		}
+		if(cols==0)
+		{std::cout<<"map file is empty\n"; return false;}
+		int rows=tileCount/cols;
+		
+		//One tile wider or taller than the screen is treated as exactly screen
+		//sized so the camera does not scroll to reveal a half-visible last row.
+		LEVEL_WIDTH=cols*32;
+		LEVEL_HEIGHT=rows*32;
+		if(LEVEL_WIDTH<SCREEN_WIDTH+32)
+		{ LEVEL_WIDTH=SCREEN_WIDTH; }
+		if(LEVEL_HEIGHT<SCREEN_HEIGHT+32)
+		{ LEVEL_HEIGHT=SCREEN_HEIGHT; }
+		
+		THEWORLD.resize(cols*rows);
+		
 		int xc=0;
 		int yc=0;
 		int ST=-1;
-		for(int i=0; i<totalTiles_; ++i)
+		for(int i=0; i<cols*rows; ++i)
 		{
 			ST=-1;
 			map>>ST;
@@ -153,7 +188,7 @@ bool loadMap(std::string path)
 			{std::cout<<"Error reading tile from map\n"<<std::endl;}
 		
 			xc+=32;
-			if(xc==2560)
+			if(xc==cols*32)
 			{
 				xc=0;
 				yc+=32;
@@ -177,7 +212,7 @@ void Tile::render(SDL_Rect & camera)
 void BuildWorld(SDL_Rect & cam)
 {
 	//feeds the vector of tiles to the renderfunction this gets called in the main loop in place of a background image
-	for(int i=0; i<totalTiles_; ++i)
+	for(int i=0; i<THEWORLD.size(); ++i)
 	{
 		THEWORLD[i]->render(cam);
 	}
@@ -234,7 +269,7 @@ void Door::collision(Player &man)
 //        	{ std::cout << "UNABLE TO LOAD GRAPHICS! NOTHING TO SEE HERE!" << std::endl; }
             Mix_HaltMusic();
             Mix_PlayMusic(flowerTheme, -1);
-       	 	man.setPos(715, 450);
+       	 	man.setPos(75, 98);
             man.clearBullets();
             
     	}
