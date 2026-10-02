@@ -34,7 +34,9 @@ bool findEmbeddedAsset(const char* path, const void** data, size_t* size)
         if(std::strcmp(asset.path, path) != 0)
         { continue; }
 
-        HRSRC resource = FindResourceA(NULL, MAKEINTRESOURCEA(asset.id), RT_RCDATA);
+        //RT_RCDATA is MAKEINTRESOURCE(10), which is the wide-character type in a Unicode
+        //build and would not match FindResourceA, so spell out the ANSI form.
+        HRSRC resource = FindResourceA(NULL, MAKEINTRESOURCEA(asset.id), MAKEINTRESOURCEA(10));
         if(resource == NULL)
         { return false; }
 
