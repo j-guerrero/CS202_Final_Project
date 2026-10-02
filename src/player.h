@@ -925,6 +925,19 @@ void Pot::move(int * frame)
 //MOB CLASSES
 //
 
+//Velocity for one axis to close a gap of diff pixels at up to step pixels per frame.
+//Clamping to the gap (instead of always moving a full step) stops a mob from
+//overshooting a target it is almost lined up with and jittering back and forth.
+inline int stepToward(int diff, int step)
+{
+    if(diff > step)
+    { return step; }
+    if(diff < -step)
+    { return -step; }
+    return diff;
+}
+
+
 class Mob:public Player
 {
 public:
@@ -945,6 +958,8 @@ public:
         
         /* ANIMATION */
         
+        //Face one direction per frame, preferring horizontal, so a mob that is
+        //mostly moving sideways does not flip between its side and up/down sprites
         //Right
         if(mVelX > 0)
         { setSprite(gSpriteClipRight, *frame); }
@@ -953,11 +968,11 @@ public:
         else if(mVelX < 0)
         { setSprite(gSpriteClipLeft, *frame); }
         
-        //Up
-        if(mVelY > 0)
+        //Down
+        else if(mVelY > 0)
         { setSprite(gSpriteClipDown, *frame); }
         
-        //Down
+        //Up
         else if(mVelY < 0)
         { setSprite(gSpriteClipUp, *frame); }
     }
@@ -975,18 +990,8 @@ public:
         {
             stop();
             
-            if(target.getPosX()>mPosX)
-                mVelX=MOB_VEL;
-            if(target.getPosX()<mPosX)
-                mVelX=-MOB_VEL;
-            if(target.getPosX()==mPosX)
-                mVelX=0;
-            if(target.getPosY()>mPosY)
-                mVelY=MOB_VEL;
-            if(target.getPosY()<mPosY)
-                mVelY=-MOB_VEL;
-            if(target.getPosY()==mPosY)
-                mVelY=0;
+            mVelX=stepToward(target.getPosX()-mPosX, MOB_VEL);
+            mVelY=stepToward(target.getPosY()-mPosY, MOB_VEL);
         }
         else if (!inRange)
         {
@@ -1156,6 +1161,8 @@ public:
         
         /* ANIMATION */
         
+        //Face one direction per frame, preferring horizontal, so a mob that is
+        //mostly moving sideways does not flip between its side and up/down sprites
         //Right
         if(mVelX > 0)
         { setSprite(gSpriteClipRight, *frame); }
@@ -1164,11 +1171,11 @@ public:
         else if(mVelX < 0)
         { setSprite(gSpriteClipLeft, *frame); }
         
-        //Up
-        if(mVelY > 0)
+        //Down
+        else if(mVelY > 0)
         { setSprite(gSpriteClipDown, *frame); }
         
-        //Down
+        //Up
         else if(mVelY < 0)
         { setSprite(gSpriteClipUp, *frame); }
     }
@@ -1180,18 +1187,8 @@ public:
         }
         else
         {
-            if(target.getPosX()>mPosX)
-                mVelX=MOB_VEL;
-            if(target.getPosX()<mPosX)
-                mVelX=-MOB_VEL;
-            if(target.getPosX()==mPosX)
-                mVelX=0;
-            if(target.getPosY()>mPosY)
-                mVelY=MOB_VEL;
-            if(target.getPosY()<mPosY)
-                mVelY=-MOB_VEL;
-            if(target.getPosY()==mPosY)
-                mVelY=0;
+            mVelX=stepToward(target.getPosX()-mPosX, MOB_VEL);
+            mVelY=stepToward(target.getPosY()-mPosY, MOB_VEL);
         }
     }
     
