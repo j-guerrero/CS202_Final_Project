@@ -1,12 +1,11 @@
 # CS202_Final_Project
 Parody of Legend of Zelda: A Link to the Past.
 
-This was a class group project (CS202), made while studying at UAF.
-
 Built from scratch using C++ and the SDL2 library (SDL2, SDL2_image, SDL2_ttf, SDL2_mixer).
 
-> **Update (2026):** This 2015 project has been updated to build and run correctly on
-> current systems (modern SDL2 libraries, Windows 11, and Linux).
+> **Update (2026):** This 2015 project was a class group project (CS202) made while studying at
+> UAF. It has been updated to build and run correctly on current systems (modern SDL2 libraries,
+> Windows 11, and Linux).
 
 All source code and assets live in `src/`.
 
