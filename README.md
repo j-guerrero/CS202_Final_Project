@@ -81,6 +81,9 @@ DLLs or asset folders to ship.
 4. Take `vs/publish/VIDEO GAME THE MOVIE THE GAME 3 (Windows x64).exe`. It is about 12 MB. (This is
    the window title without its colons, which Windows filenames cannot contain, plus the platform.)
 5. To check it, copy it to an empty folder and run it there, away from the project folders.
+   Running it from Visual Studio does not prove the assets are embedded, because Visual Studio
+   starts it in `src/`, where the files exist on disk. The console prints
+   `Embedded assets found: 21 of 21` at startup when they are embedded.
 6. To share it, send the `.exe`. It runs from anywhere.
 
 If something goes wrong:
@@ -90,14 +93,18 @@ If something goes wrong:
   "Use Static Libraries" is Yes for Release|x64.
 - **A DLL is still needed to run the Release `.exe`:** the static libraries were not picked up, so
   the build fell back to the DLL versions. Check the same "Use Static Libraries" setting.
-- **The game starts but shows no images or plays no sound in Release:** the assets did not get
-  embedded. Check that `src/assets.rc` is in the project (Resource Files) and not excluded for
-  Release|x64.
-- **The build fails on the resource script:** every file listed in `src/assets_list.h` must exist.
+- **The game starts but shows no images or plays no sound in Release** (the console says
+  `Embedded assets found: 0 of 21`, or a gray screen with "Couldn't open images/..." errors): the
+  assets did not get embedded. Check that `src/assets.rc` is in the project (Resource Files) and
+  not excluded for Release|x64, and that the build output shows `assets.rc` being compiled.
+  The console also prints the executable's folder; if the assets are not embedded, they are loaded
+  from the working directory or from next to the `.exe`.
+- **The build fails on the resource script:** every file listed in `src/assets.rc` must exist.
 
-If you add or rename an asset file, add or change its line in `src/assets_list.h`. That one list
-drives both the embedding and the lookup. Debug and non-Windows builds read the files from disk
-and need no list entry.
+If you add or rename an asset file, add or change it in both `src/assets.rc` (a plain
+`id RCDATA "path"` line) and `src/assets_list.h`, using the same id and path. Debug and
+non-Windows builds read the files from disk and need no entry. The startup line
+`Embedded assets found: N of M` shows if the two lists ever disagree.
 
 The game has been run on Windows 11 under WSL2 and built, run and published with Visual Studio.
 The single-file build has not yet been confirmed in Visual Studio.

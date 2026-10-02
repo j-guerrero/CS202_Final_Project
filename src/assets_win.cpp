@@ -25,6 +25,20 @@ namespace
     };
 }
 
+//Counts how many of the listed assets are really embedded in this executable
+int embeddedAssetCount(int* total)
+{
+    int found = 0;
+    for(const EmbeddedAsset& asset : assetTable)
+    {
+        if(FindResourceA(NULL, MAKEINTRESOURCEA(asset.id), MAKEINTRESOURCEA(10)) != NULL)
+        { ++found; }
+    }
+    if(total != NULL)
+    { *total = (int)(sizeof(assetTable) / sizeof(assetTable[0])); }
+    return found;
+}
+
 //Finds an embedded asset by its path relative to src/ (e.g. "images/health.png").
 //The data stays valid for the life of the program.
 bool findEmbeddedAsset(const char* path, const void** data, size_t* size)

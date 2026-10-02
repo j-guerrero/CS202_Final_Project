@@ -1,6 +1,7 @@
 // Every asset the game loads, as ASSET(id, "path relative to src/").
-// This one list feeds both the resource script (assets.rc) and the lookup table
-// (assets_win.cpp), so add new files here and nowhere else.
+// This list feeds the lookup table in assets_win.cpp. assets.rc has to list the same
+// ids and paths as plain `id RCDATA "path"` lines (rc.exe cannot use this macro list),
+// so when you add a file, add it in both places.
 // Maps/mobs/Mobs.mobs is empty and is deliberately left out: a missing file is
 // read the same as an empty one.
 ASSET(1001, "images/tilesheet.png")

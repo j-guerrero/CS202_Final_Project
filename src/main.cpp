@@ -320,6 +320,20 @@ bool loadMedia()
     //Loading success flag
     bool success = true;
     
+    //Say where the assets come from, to make a missing or unembedded build obvious
+    int embeddedTotal = 0;
+    int embeddedFound = embeddedAssetCount(&embeddedTotal);
+    if(embeddedTotal > 0)
+    { std::cout << "Embedded assets found: " << embeddedFound << " of " << embeddedTotal << std::endl; }
+    else
+    { std::cout << "Assets are read from files, not embedded." << std::endl; }
+    char* exeFolder = SDL_GetBasePath();
+    if(exeFolder != NULL)
+    {
+        std::cout << "Executable folder: " << exeFolder << std::endl;
+        SDL_free(exeFolder);
+    }
+    
     //Load/assign Tile Sheet
     if(!loadTileSet("images/tilesheet.png"))
     {
