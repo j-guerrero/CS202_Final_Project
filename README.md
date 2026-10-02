@@ -95,21 +95,6 @@ The game has been run on Windows 11 under WSL2 and built, run and published with
    to the `src` folder (the saved path points at the original author's machine).
 4. Build and run.
 
-## Releases
-
-Pre-built Windows (`game-windows-x64.zip`) and Linux (`game-linux-x64.tar.gz`) packages are
-built by GitHub Actions (`.github/workflows/release.yml`) and attached to each GitHub Release.
-To publish one, push a version tag from `master`:
-
-```
-git tag v1.0
-git push origin v1.0
-```
-
-The workflow can also be run manually from the Actions tab (it uploads the zips as
-workflow artifacts without creating a Release). Run the game from inside the extracted
-folder; the Linux package needs the SDL2 runtime libraries installed (see its `README.txt`).
-
 ## Notes
 
 - `images/pointer.bmp` is referenced in `menu.h` but is not included in the repository.

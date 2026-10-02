@@ -23,12 +23,6 @@ build/
 *.exp
 src/game
 
-# ---- Release packaging (made by .github/workflows/release.yml, or by hand) ----
-dist/
-artifacts/
-game-windows-x64.zip
-game-linux-x64.tar.gz
-
 # ---- Xcode ----
 DerivedData/
 xcuserdata/
