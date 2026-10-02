@@ -1,0 +1,29 @@
+// Resource script that embeds the game's assets in the executable.
+// Only compiled into the Release build (see vs/vs-app.vcxproj).
+//
+// Plain statements on purpose: rc.exe has a limited preprocessor and is not
+// guaranteed to expand macros that take arguments. The ids and paths here must
+// match assets_list.h, which assets_win.cpp uses to find them; the game logs
+// how many embedded assets it found at startup so a mismatch is visible.
+
+1001 RCDATA "images/tilesheet.png"
+1002 RCDATA "images/health.png"
+1003 RCDATA "images/teamLogo.png"
+1004 RCDATA "images/sheet1.png"
+1005 RCDATA "images/sheet2.png"
+1006 RCDATA "images/maryjane.png"
+1007 RCDATA "images/theBoss.png"
+1008 RCDATA "images/bullet.png"
+1101 RCDATA "sound/WWtheme.ogg"
+1102 RCDATA "sound/overworld.ogg"
+1103 RCDATA "sound/snakeEater.ogg"
+1104 RCDATA "sound/sabotage.ogg"
+1105 RCDATA "sound/gun.wav"
+1106 RCDATA "sound/boop.wav"
+1107 RCDATA "sound/death.wav"
+1201 RCDATA "fonts/RetGanon.ttf"
+1301 RCDATA "maps/1.map"
+1302 RCDATA "maps/2.map"
+1303 RCDATA "maps/disco.map"
+1401 RCDATA "maps/mobs/Mobs1.mobs"
+1402 RCDATA "maps/mobs/Mobs2.mobs"

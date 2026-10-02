@@ -16,6 +16,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <sstream>
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -1278,11 +1279,11 @@ void addchaseMob(int x, int y, int h, int d, int s)
 //Extract Data from mob file
 void loadMobs(std::string path)
 {
-    std::ifstream ifs;
-    ifs.open(path);
+    std::string text;
     
-    if(ifs)
+    if(readAssetText(path, text))
     {
+        std::istringstream ifs(text);
         int t,x,y,h,d,s;
         //Stop as soon as a full entry can't be read. Looping on eof() would run
         //once more after the last line and spawn that entry a second time.

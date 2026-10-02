@@ -55,40 +55,59 @@ older versions).
 
 1. Install Visual Studio with the "Desktop development with C++" workload and set up vcpkg
    (`vcpkg integrate install`; the copy bundled with Visual Studio works).
-2. Install the libraries: `vcpkg install sdl2:x64-windows sdl2-image:x64-windows sdl2-ttf:x64-windows sdl2-mixer:x64-windows`
+2. Install the libraries. Debug uses the DLL versions and Release links them statically:
+
+   ```
+   vcpkg install sdl2:x64-windows sdl2-image:x64-windows sdl2-ttf:x64-windows sdl2-mixer:x64-windows
+   vcpkg install sdl2:x64-windows-static sdl2-image:x64-windows-static sdl2-ttf:x64-windows-static sdl2-mixer:x64-windows-static
+   ```
 3. Open `vs/vs-app.slnx`, choose **x64** and Debug or Release, and build/run. Only x64 is set up;
    the x86 configurations will not build.
 
-The project already defines `_USE_MATH_DEFINES` and `SDL_MAIN_HANDLED`, and debugs with `src/` as
-the working directory so the game finds its assets. Build output goes to `vs/build/x64/<Config>/`
-with the assets copied next to the `.exe` (vcpkg copies the SDL DLLs).
+The project already defines `_USE_MATH_DEFINES` and `SDL_MAIN_HANDLED`. Debug builds read the
+assets from `src/` (the debugger's working directory) and copy them next to the `.exe` in
+`vs/build/x64/Debug/`, with vcpkg copying the SDL DLLs.
 
-#### Publishing an executable with Visual Studio
+#### Publishing a single-file executable with Visual Studio
 
-A Release build assembles a folder you can share:
+A **Release** build produces one self-contained `.exe`: SDL is linked statically and the images,
+music, sound effects, font and maps are embedded in it as Windows resources, so there are no
+DLLs or asset folders to ship.
 
 1. Open `vs/vs-app.slnx`.
 2. In the toolbar set the configuration to **Release** and the platform to **x64**.
 3. Build with Build > Rebuild Solution (Ctrl+Shift+B). The first build is slower because the
-   sound files are copied.
-4. Take the result from `vs/publish/`. It contains `vs-app.exe`, the SDL DLLs and the `images`,
-   `sound`, `maps` and `fonts` folders.
-5. To check it, run `vs/publish/vs-app.exe` (double-click it) outside of Visual Studio.
-6. To share it, zip the whole `publish` folder. Whoever receives it unzips it and runs
-   `vs-app.exe` from inside the folder, since the game loads its assets by relative path.
+   assets are compiled into the executable.
+4. Take `vs/publish/VIDEO GAME THE MOVIE THE GAME 3 (Windows x64).exe`. It is about 12 MB. (This is
+   the window title without its colons, which Windows filenames cannot contain, plus the platform.)
+5. To check it, copy it to an empty folder and run it there, away from the project folders.
+   Running it from Visual Studio does not prove the assets are embedded, because Visual Studio
+   starts it in `src/`, where the files exist on disk. The console prints
+   `Embedded assets found: 21 of 21` at startup when they are embedded.
+6. To share it, send the `.exe`. It runs from anywhere.
 
-If something is missing from `vs/publish/`:
+If something goes wrong:
 
-- **No DLLs:** vcpkg copies them into `vs/build/x64/Release/` first, and the publish step copies
-  from there. Make sure `vcpkg integrate install` has been run and that Project > Properties >
-  vcpkg > "Use AppLocal Deps" is Yes.
-- **The build fails on an `xcopy` line:** the post-build commands are in the project's
-  Properties > Build Events > Post-Build Event. Check the paths there and the Output window
-  for the exact message.
-- **The game starts but shows no images or sound:** the asset folders are not next to the
-  `.exe`. Run it from inside `vs/publish/`.
+- **Linker errors about missing SDL libraries or `unresolved external` symbols:** Release needs the
+  `x64-windows-static` libraries from step 2. In Project > Properties > vcpkg, check that
+  "Use Static Libraries" is Yes for Release|x64.
+- **A DLL is still needed to run the Release `.exe`:** the static libraries were not picked up, so
+  the build fell back to the DLL versions. Check the same "Use Static Libraries" setting.
+- **The game starts but shows no images or plays no sound in Release** (the console says
+  `Embedded assets found: 0 of 21`, or a gray screen with "Couldn't open images/..." errors): the
+  assets did not get embedded. Check that `src/assets.rc` is in the project (Resource Files) and
+  not excluded for Release|x64, and that the build output shows `assets.rc` being compiled.
+  The console also prints the executable's folder; if the assets are not embedded, they are loaded
+  from the working directory or from next to the `.exe`.
+- **The build fails on the resource script:** every file listed in `src/assets.rc` must exist.
 
-The game has been run on Windows 11 under WSL2 and built, run and published with Visual Studio.
+If you add or rename an asset file, add or change it in both `src/assets.rc` (a plain
+`id RCDATA "path"` line) and `src/assets_list.h`, using the same id and path. Debug and
+non-Windows builds read the files from disk and need no entry. The startup line
+`Embedded assets found: N of M` shows if the two lists ever disagree.
+
+The game has been run on Windows 11 under WSL2, and built, run and published as a single-file
+executable with Visual Studio.
 
 ### Xcode (macOS)
 
