@@ -78,7 +78,8 @@ DLLs or asset folders to ship.
 2. In the toolbar set the configuration to **Release** and the platform to **x64**.
 3. Build with Build > Rebuild Solution (Ctrl+Shift+B). The first build is slower because the
    assets are compiled into the executable.
-4. Take `vs/publish/vs-app.exe`. It is about 12 MB.
+4. Take `vs/publish/VIDEO GAME THE MOVIE THE GAME 3.exe`. It is about 12 MB. (This is the window
+   title without its colons, which Windows filenames cannot contain.)
 5. To check it, copy it to an empty folder and run it there, away from the project folders.
 6. To share it, send the `.exe`. It runs from anywhere.
 
