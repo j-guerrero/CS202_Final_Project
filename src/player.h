@@ -23,7 +23,7 @@
 #include "bullet.h"
 
 
-const int WALKING_ANIMATION_FRAMES = 3; const int SCREEN_WIDTH = 1280; const int SCREEN_HEIGHT = 720; const int LEVEL_HEIGHT = 1440; const int LEVEL_WIDTH = 2560;
+const int WALKING_ANIMATION_FRAMES = 3; const int SCREEN_WIDTH = 1280; const int SCREEN_HEIGHT = 720; int LEVEL_HEIGHT = 1440; int LEVEL_WIDTH = 2560; //Current level size in pixels, set by loadMap
 
 bool checkCollision( SDL_Rect a, SDL_Rect b );
 
